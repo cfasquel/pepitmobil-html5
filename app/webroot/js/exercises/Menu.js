@@ -27,11 +27,10 @@ var Menu = function () {
 
 		$divMenu = $("#container");
 		$divMenu.html("");
-		printMenu();
     };
 
 // private methods
-    var printMenu = function () {
+    Menu.prototype.printMainMenu = function() {
 		
 		$divMenu.append('<div id="row1" class="row"></div>');
 		$("#row1").append(	'<div id="col1-1" class="col-lg-3"></div>');
@@ -47,8 +46,7 @@ var Menu = function () {
 		$.getJSON('data/exercises.json', function (donnees) {
             donnees.levels.forEach(function (level, i) {
 
-
-				$("#col" + row + '-' + index).append('<a href="/pepit/pepitmobil-html5/pages/exercises/" class="btn ' + btnStyle + ' btn-block" style="padding:10px" role="button">'
+				$("#col" + row + '-' + index).append('<a href="#" onClick="new Menu().printSubMenu(\'' + level.label + '\');" class="btn ' + btnStyle + ' btn-block" style="padding:10px" role="button">'
 					+ level.label + '<br/><i style="font-size: 12px">' + level.subLabel + '</i></a><br/>');
 				
 				switch(index)
@@ -67,10 +65,10 @@ var Menu = function () {
 						index = 0;
 						row++;
 						$divMenu.append('<div id="row' + row + '" class="row"></div>');
-						$("#row" + row).append(	'<div id="col' + row + '-1" class="col-lg-3"></div>');
-						$("#row" + row).append(	'<div id="col' + row + '-2" class="col-lg-3"></div>');
-						$("#row" + row).append(	'<div id="col' + row + '-3" class="col-lg-3"></div>');
-						$("#row" + row).append(	'<div id="col' + row + '-4" class="col-lg-3"></div>');
+						$("#row" + row).append('<div id="col' + row + '-1" class="col-lg-3"></div>');
+						$("#row" + row).append('<div id="col' + row + '-2" class="col-lg-3"></div>');
+						$("#row" + row).append('<div id="col' + row + '-3" class="col-lg-3"></div>');
+						$("#row" + row).append('<div id="col' + row + '-4" class="col-lg-3"></div>');
 						break;
 				}
 				index++;
@@ -78,6 +76,61 @@ var Menu = function () {
             });
         });
     };
+	
+	Menu.prototype.printSubMenu = function(menuName) {
+
+		$divMenu.html("");
+		$divMenu.append('<div id="row1" class="row"></div>');
+		$("#row1").append('<div id="col1-1" class="col-lg-3"></div>');
+		$("#row1").append('<div id="col1-2" class="col-lg-3"></div>');
+		$("#row1").append(	'<div id="col1-3" class="col-lg-3"></div>');
+		$("#row1").append(	'<div id="col1-4" class="col-lg-3"></div>');
+		
+		var index = 1;
+		var row = 1;
+		
+		var btnStyle = "panel-primary";
+		
+		$.getJSON('data/exercises.json', function (donnees) {
+			donnees.levels.forEach(function (level, i) {
+				if(level.label == menuName) {
+					
+					
+					level.subjects.forEach(function (subject, i) {
+						$("#col" + row + "-" + index).append('<div class="list-group"><div class="list-group-item active">' + subject.label + '</div></div>');
+						
+						subject.topics.forEach(function (topic, i) {
+							$("#col" + row + "-" + index + " .list-group").append('<a href="" class="list-group-item" style="color:black;">' + topic.label + '</a>');
+						});
+						
+						switch(index)
+						{
+							case 1 :
+								btnStyle = "btn-success";
+								break;
+							case 2 :
+								btnStyle = "btn-warning";
+								break;
+							case 3 :
+								btnStyle = "btn-info";
+								break;
+							case 4 :
+								btnStyle = "btn-primary";
+								index = 0;
+								row++;
+								$divMenu.append('<div id="row' + row + '" class="row"></div>');
+								$("#row" + row).append('<div id="col' + row + '-1" class="col-lg-3"></div>');
+								$("#row" + row).append('<div id="col' + row + '-2" class="col-lg-3"></div>');
+								$("#row" + row).append('<div id="col' + row + '-3" class="col-lg-3"></div>');
+								$("#row" + row).append('<div id="col' + row + '-4" class="col-lg-3"></div>');
+								break;
+						}
+						index++;
+					});
+				}
+			});
+		});
+	};
 
 // private attributes
     var $divMenu;
