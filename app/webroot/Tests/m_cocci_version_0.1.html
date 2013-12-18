@@ -1,0 +1,194 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<style>
+		body {
+			margin: 0px;
+			padding: 0px;
+		}
+		canvas {
+			border: 1px solid #9C9898;
+		}
+		#tango {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			padding: 10px;
+		}
+		#container {
+			background-image: url("http://www.html5canvastutorials.com/demos/assets/blue-background.jpg");
+			display: inline-block;
+			overflow: hidden;
+			height: 350px;
+			width: 350px;
+		}
+		</style>
+	</head>
+	<body onmousedown="return false;">
+		<div id="container"></div>
+		<input type="button" id="tango" value="Action !">
+		<script src="kinetic.js"></script>
+		<script defer="defer">
+			// -- Fonctions du jeu ---------------------------------------
+			
+			//Constantes
+			var HAUTEUR_IMAGE = 64;
+			var LARGEUR_IMAGE = 64;
+			var HAUTEUR_STAGE = 348;
+			var LARGEUR_STAGE = 348;
+			
+			var NB_MAX_IMAGES = 6; //Nombre d'images max possible à deviner
+			
+			//Variables
+			var NbImages = 3; //nombre d'images à deviner
+			//Pour placer une image et la déplacer ensuite
+			var coord_origin_x = -64;
+			var coord_origin_y = -64;
+			var coord_dest_x = 350;
+			var coord_dest_y = 350;
+			
+			//Génère un nombre aléatoire 
+			function generateRandomInteger(){
+				return Math.floor(Math.random() * 5) + 1;
+			}
+			
+			//Génère des coordonnées aléatoirement,
+			//de sorte à ce que l'image ne soit pas visible au départ, et en fin de course
+			function generateCoord(){
+				if (Math.random() > 0.5){
+					coord_origin_x = (Math.floor(Math.random() * (LARGEUR_STAGE + LARGEUR_IMAGE)) + 1) - LARGEUR_IMAGE;
+					coord_origin_y = - HAUTEUR_IMAGE;
+					coord_dest_x = (Math.floor(Math.random() * (LARGEUR_STAGE * 0.75)) + 1) - (LARGEUR_IMAGE * 0.75);
+					coord_dest_y = HAUTEUR_STAGE;
+				}
+				else{
+					coord_origin_x = - LARGEUR_IMAGE;
+					coord_origin_y = (Math.floor(Math.random() * (HAUTEUR_STAGE + HAUTEUR_IMAGE)) + 1) - HAUTEUR_IMAGE;
+					coord_dest_x = LARGEUR_STAGE;
+					coord_dest_y = (Math.floor(Math.random() * (HAUTEUR_STAGE * 0.75)) + 1) - (HAUTEUR_IMAGE * 0.75);
+				}
+				//alert("X : " + coord_origin_x + " / Y : " + coord_origin_y + "\n" + "X : " + coord_dest_x + " / Y : " + coord_dest_y);
+			}
+			
+			//Crée une image
+			function createImg(){
+				//On détermine les coordonnées d'origine de l'image,
+				//pour qu'elle ne soit pas visible à l'écran
+				//TODO
+				
+				var imageObj = new Image();
+				imageObj.src = 'avatar_invite_surprise.png';
+				imageObj.onload = function() {
+					Image = new Kinetic.Image({
+						//x: Math.random() * stage.getWidth(),
+						//y: Math.random() * stage.getHeight(),
+						//x: 350,
+						//y: 350,
+						x: coord_origin_x,
+						y: coord_origin_y,
+						width: LARGEUR_IMAGE,
+						height: HAUTEUR_IMAGE,
+						image: imageObj
+					});
+					layer.add(Image);
+					layer.draw();
+				};
+			}
+			
+			//Supprime la dernière image créée
+			function removeImgs(){
+				//layer.removeChildren();
+				//stage.removeChildren();
+				
+				for(var n = 0; n < layer.getChildren().length; n++) {
+					var img = layer.getChildren()[n];
+					img.destroy();
+				}
+			}
+			
+			function imageTranslation(n){
+				
+				var img = layer.getChildren()[n];
+				var stage = img.getStage();
+				
+				//x et y symbolisent les nouvelles coordonnées de l'image
+				var tw = new Kinetic.Tween({
+					node: img,
+					duration: 1,
+					x: coord_dest_x,
+					y: coord_dest_y,
+					easing: Kinetic.Easings.EaseInOut
+				});
+				tw.play();
+			}
+			
+			
+			function init(){
+				NbImages = generateRandomInteger();
+				//alert(NbImages);
+				//for(var i = 0; i < NbImages; i++){
+				//	createImg();
+				//}
+			}
+			
+			init();
+			
+			function game(layer) {
+				//for(var n = 0; n < layer.getChildren().length; n++) {
+				//init();
+				//for(var n = 0; n < NbImages; n++) {
+				
+				n = 0;
+				generateCoord();
+				createImg();
+				setTimeout(function(){
+					imageTranslation(n);
+					setTimeout( function(){
+						removeImgs();
+						showQuestionAnswers();
+					}, 1000);
+				}, 1000);
+				
+				//document.getElementById('tango').disabled = true;		
+				
+			}
+			
+			function showQuestionAnswers(){
+				document.getElementById('question').innerHTML = "Combien de bonhommes avez-vous vu ?";
+				setTimeout("showAnswers()", 1000);
+			}
+			
+			function showAnswers(){
+				document.getElementById('rep1').style.visibility = "visible";
+				document.getElementById('rep2').style.visibility = "visible";
+				document.getElementById('rep3').style.visibility = "visible";
+				document.getElementById('rep4').style.visibility = "visible";
+			}
+
+
+			var stage = new Kinetic.Stage({
+				container: 'container',
+				width: LARGEUR_STAGE,
+				height: HAUTEUR_STAGE
+			});
+
+			var layer = new Kinetic.Layer();
+			
+			stage.add(layer);
+
+			document.getElementById('tango').addEventListener('click', function() {
+				game(layer);
+			}, false);
+			
+		</script>
+
+		<div id="enonce">
+			<p id="question"></p>
+			<input id="rep1" type="button" value="0" style="visibility:hidden;"\>
+			<input id="rep2" type="button" value="0" style="visibility:hidden;"\>
+			<input id="rep3" type="button" value="0" style="visibility:hidden;"\>
+			<input id="rep4" type="button" value="0" style="visibility:hidden;"\>
+			
+		</div>
+	</body>
+</html>
