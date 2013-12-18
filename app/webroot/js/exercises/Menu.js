@@ -46,7 +46,7 @@ var Menu = function () {
 		$.getJSON('data/exercises.json', function (donnees) {
             donnees.levels.forEach(function (level, i) {
 
-				$("#col" + row + '-' + index).append('<a href="#" onClick="new Menu().printSubMenu(\'' + level.label + '\');" class="btn ' + btnStyle + ' btn-block" style="padding:10px" role="button">'
+				$("#col" + row + '-' + index).append('<a href="#" onClick="new Menu().printSubMenu(\'' + level.name + '\');" class="btn ' + btnStyle + ' btn-block" style="padding:10px" role="button">'
 					+ level.label + '<br/><i style="font-size: 12px">' + level.subLabel + '</i></a><br/>');
 				
 				switch(index)
@@ -93,14 +93,14 @@ var Menu = function () {
 		
 		$.getJSON('data/exercises.json', function (donnees) {
 			donnees.levels.forEach(function (level, i) {
-				if(level.label == menuName) {
+				if(level.name == menuName) {
 					
 					
 					level.subjects.forEach(function (subject, i) {
 						$("#col" + row + "-" + index).append('<div class="list-group"><div class="list-group-item active">' + subject.label + '</div></div>');
 						
 						subject.topics.forEach(function (topic, i) {
-							$("#col" + row + "-" + index + " .list-group").append('<a href="" class="list-group-item" style="color:black;">' + topic.label + '</a>');
+							$("#col" + row + "-" + index + " .list-group").append('<a href="" onClick="new Menu().generateGame(\'' + menuName + '\', \'' + subject.name + '\', \'' + topic.name + '\');" class="list-group-item" style="color:black;">' + topic.label + '</a>');
 						});
 						
 						switch(index)
@@ -131,6 +131,13 @@ var Menu = function () {
 			});
 		});
 	};
+	
+	Menu.prototype.generateGame = function(menuName, subjectName, topicName) {
+		$divMenu.html('');
+		$divMenu.append('<script src="js/exercises/' + menuName + '/' + subjectName + '/' + topicName + '.js"></script>');
+	};
+	
+
 
 // private attributes
     var $divMenu;
