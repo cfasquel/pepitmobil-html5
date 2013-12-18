@@ -71,19 +71,11 @@
 			}
 			
 			//Crée une image
-			function createImg(){
-				//On détermine les coordonnées d'origine de l'image,
-				//pour qu'elle ne soit pas visible à l'écran
-				//TODO
-				
+			function createImg(){			
 				var imageObj = new Image();
 				imageObj.src = 'avatar_invite_surprise.png';
 				imageObj.onload = function() {
 					Image = new Kinetic.Image({
-						//x: Math.random() * stage.getWidth(),
-						//y: Math.random() * stage.getHeight(),
-						//x: 350,
-						//y: 350,
 						x: coord_origin_x,
 						y: coord_origin_y,
 						width: LARGEUR_IMAGE,
