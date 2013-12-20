@@ -1,6 +1,7 @@
-<!DOCTYPE HTML>
+ï»¿<!DOCTYPE HTML>
 <html>
 	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<style>
 		body {
 			margin: 0px;
@@ -37,23 +38,24 @@
 			var HAUTEUR_STAGE = 348;
 			var LARGEUR_STAGE = 348;
 			
-			var NB_MAX_IMAGES = 6; //Nombre d'images max possible à deviner
+			var NB_MAX_IMAGES = 6; //Nombre d'images max possible Ã  deviner
+			var NB_REP = 4;
 			
 			//Variables
-			var NbImages = 3; //nombre d'images à deviner
-			//Pour placer une image et la déplacer ensuite
+			var NbImages = 1; //nombre d'images Ã  deviner - 1 par dÃ©faut
+			//Pour placer une image et la dÃ©placer ensuite
 			var coord_origin_x = -64;
 			var coord_origin_y = -64;
 			var coord_dest_x = 350;
 			var coord_dest_y = 350;
 			
-			//Génère un nombre aléatoire 
+			//GÃ©nÃ¨re un nombre alÃ©atoire 
 			function generateRandomInteger(){
-				return Math.floor(Math.random() * 5) + 1;
+				return Math.floor(Math.random() * NB_MAX_IMAGES) + 1;
 			}
 			
-			//Génère des coordonnées aléatoirement,
-			//de sorte à ce que l'image ne soit pas visible au départ, et en fin de course
+			//GÃ©nÃ¨ des coordonnÃ©es alÃ©oirement,
+			//de sorte Ã  ce que l'image ne soit pas visible au dÃ©part, et en fin de course
 			function generateCoord(){
 				if (Math.random() > 0.5){
 					coord_origin_x = (Math.floor(Math.random() * (LARGEUR_STAGE + LARGEUR_IMAGE)) + 1) - LARGEUR_IMAGE;
@@ -70,7 +72,7 @@
 				//alert("X : " + coord_origin_x + " / Y : " + coord_origin_y + "\n" + "X : " + coord_dest_x + " / Y : " + coord_dest_y);
 			}
 			
-			//Crée une image
+			//CrÃ©e une image
 			function createImg(){			
 				var imageObj = new Image();
 				imageObj.src = 'avatar_invite_surprise.png';
@@ -87,15 +89,17 @@
 				};
 			}
 			
-			//Supprime la dernière image créée
+			//Supprime la derniÃ¨re image crÃ©Ã©e
 			function removeImgs(){
 				//layer.removeChildren();
 				//stage.removeChildren();
 				
-				for(var n = 0; n < layer.getChildren().length; n++) {
+				for(var n = 0; n < layer.getChildren().length - 1; n++) {
 					var img = layer.getChildren()[n];
 					img.destroy();
+					//alert("image dÃ©truite");
 				}
+				
 			}
 			
 			function imageTranslation(n){
@@ -103,7 +107,7 @@
 				var img = layer.getChildren()[n];
 				var stage = img.getStage();
 				
-				//x et y symbolisent les nouvelles coordonnées de l'image
+				//x et y symbolisent les nouvelles coordonnÃ©es de l'image
 				var tw = new Kinetic.Tween({
 					node: img,
 					duration: 1,
@@ -129,10 +133,12 @@
 				//for(var n = 0; n < layer.getChildren().length; n++) {
 				//init();
 				//for(var n = 0; n < NbImages; n++) {
-				
+				init();
 				n = 0;
 				generateCoord();
+				
 				createImg();
+				
 				setTimeout(function(){
 					imageTranslation(n);
 					setTimeout( function(){
@@ -151,10 +157,57 @@
 			}
 			
 			function showAnswers(){
+				var indice_bonne_rep = Math.floor(Math.random() * 4) + 1;
+				var tab = [];
+				var temp = 0;
+				//On gÃ©nÃ¨re les rÃ©ponses possibles - sans prendre la solution
+				for(var i = 1; i < NB_MAX_IMAGES; i++){
+					if(i != NbImages)
+						tab.push(i);
+				}
+				
+				for(var i = 1; i <= NB_REP; i++){
+					if(i == indice_bonne_rep){
+						document.getElementById('rep' + i).value = NbImages;
+					}
+					else{
+						temp = tab.splice(Math.floor(Math.random() * tab.length),1);
+						document.getElementById('rep' + i).value = temp[0];
+					}
+				}
+				
 				document.getElementById('rep1').style.visibility = "visible";
 				document.getElementById('rep2').style.visibility = "visible";
 				document.getElementById('rep3').style.visibility = "visible";
 				document.getElementById('rep4').style.visibility = "visible";
+				
+				//Maintenant que les boutons sont visibles, on leur ajoute un Ã©vÃ©nement au clic
+				document.getElementById('rep1').addEventListener('click', function() {
+					checkAnswer(1);
+				}, false);
+				
+				document.getElementById('rep2').addEventListener('click', function() {
+					checkAnswer(2);
+				}, false);
+				
+				document.getElementById('rep3').addEventListener('click', function() {
+					checkAnswer(3);
+				}, false);
+				
+				document.getElementById('rep4').addEventListener('click', function() {
+					checkAnswer(4);
+				}, false);
+			}
+			
+			function checkAnswer(n){
+				var answer = document.getElementById('rep' + n).value;
+				if(answer == NbImages){
+					alert("Bonne r\351ponse !");
+				}
+				else{
+					alert("Non ! Essaie encore !");
+					document.getElementById('rep' + n).disabled = true;
+				}
 			}
 
 
@@ -171,6 +224,7 @@
 			document.getElementById('tango').addEventListener('click', function() {
 				game(layer);
 			}, false);
+			
 			
 		</script>
 
