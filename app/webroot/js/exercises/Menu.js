@@ -26,6 +26,8 @@ var Menu = function () {
     this.init = function () {
 
 		$divMenu = $("#container");
+		$breadcrumb = $("#breadcrumb");
+		
 		$divMenu.html("");
     };
 
@@ -33,10 +35,10 @@ var Menu = function () {
     Menu.prototype.printMainMenu = function() {
 		
 		$divMenu.append('<div id="row1" class="row"></div>');
-		$("#row1").append(	'<div id="col1-1" class="col-lg-3"></div>');
-		$("#row1").append(	'<div id="col1-2" class="col-lg-3"></div>');
-		$("#row1").append(	'<div id="col1-3" class="col-lg-3"></div>');
-		$("#row1").append(	'<div id="col1-4" class="col-lg-3"></div>');
+		$("#row1").append('<div id="col1-1" class="col-lg-3"></div>');
+		$("#row1").append('<div id="col1-2" class="col-lg-3"></div>');
+		$("#row1").append('<div id="col1-3" class="col-lg-3"></div>');
+		$("#row1").append('<div id="col1-4" class="col-lg-3"></div>');
 
 		var index = 1;
 		var row = 1;
@@ -46,7 +48,7 @@ var Menu = function () {
 		$.getJSON('data/exercises.json', function (donnees) {
             donnees.levels.forEach(function (level, i) {
 
-				$("#col" + row + '-' + index).append('<a href="#" onClick="new Menu().printSubMenu(\'' + level.name + '\');" class="btn ' + btnStyle + ' btn-block" style="padding:10px" role="button">'
+				$("#col" + row + '-' + index).append('<a href="#" onClick="new Menu().printSubMenu(\'' + level.name + '\', \'' + level.label + '\');" class="btn ' + btnStyle + ' btn-block" style="padding:10px" role="button">'
 					+ level.label + '<br/><i style="font-size: 12px">' + level.subLabel + '</i></a><br/>');
 				
 				switch(index)
@@ -77,7 +79,7 @@ var Menu = function () {
         });
     };
 	
-	Menu.prototype.printSubMenu = function(menuName) {
+	Menu.prototype.printSubMenu = function(menuName, menuLabel) {
 
 		$divMenu.html("");
 		$divMenu.append('<div id="row1" class="row"></div>');
@@ -95,12 +97,11 @@ var Menu = function () {
 			donnees.levels.forEach(function (level, i) {
 				if(level.name == menuName) {
 					
-					
 					level.subjects.forEach(function (subject, i) {
 						$("#col" + row + "-" + index).append('<div class="list-group"><div class="list-group-item active">' + subject.label + '</div></div>');
 						
 						subject.topics.forEach(function (topic, i) {
-							$("#col" + row + "-" + index + " .list-group").append('<a href="" onClick="new Menu().generateGame(\'' + menuName + '\', \'' + subject.name + '\', \'' + topic.name + '\');" class="list-group-item" style="color:black;">' + topic.label + '</a>');
+							$("#col" + row + "-" + index + " .list-group").append('<a href="#" onClick="new Menu().generateGame(\'' + menuName + '\', \'' + subject.name + '\', \'' + topic.name + '\', \'' + topic.label + '\');" class="list-group-item" style="color:black;">' + topic.label + '</a>');
 						});
 						
 						switch(index)
@@ -130,17 +131,22 @@ var Menu = function () {
 				}
 			});
 		});
+		
+		$breadcrumb.append('<li><a href="#">' + menuLabel + '</a></li>');
+		
 	};
 	
-	Menu.prototype.generateGame = function(menuName, subjectName, topicName) {
-		$divMenu.html('');
-		$divMenu.append('<script src="js/exercises/' + menuName + '/' + subjectName + '/' + topicName + '.js"></script>');
+	Menu.prototype.generateGame = function(menuName, subjectName, topicName, topicLabel) {
+		$divMenu.html('<canvas id="exemple" width="800" height="600">Error Loading Canvas</canvas>');
+		
+		$breadcrumb.append('<li><a href="#">' + topicLabel + '</a></li>');
 	};
 	
 
 
 // private attributes
     var $divMenu;
+	var $breadcrumb;
 	
 	this.init();
 }; 
