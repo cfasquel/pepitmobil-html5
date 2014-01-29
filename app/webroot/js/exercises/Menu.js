@@ -137,8 +137,14 @@ var Menu = function () {
 	};
 	
 	Menu.prototype.generateGame = function(menuName, subjectName, topicName, topicLabel) {
-		$divMenu.html('<canvas id="exemple" width="800" height="600">Error Loading Canvas</canvas>');
+		$divMenu.html('<canvas id="gameCanvas" width="800" height="600">Error Loading Canvas</canvas>');
 		
+		$.ajax({
+			url: "js/exercises/" + menuName + "/" + subjectName + "/" + topicName + "/Test.js",
+			dataType: "script",
+			async:false
+		});
+
 		$breadcrumb.append('<li><a href="#">' + topicLabel + '</a></li>');
 	};
 	
